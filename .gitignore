@@ -218,5 +218,7 @@ pip-log.txt
 ./makmods/levelstorage/item/ItemSuperconductor.java
 ./makmods/levelstorage/render/RenderSuperconductorCable.java
 ./makmods/levelstorage/tileentity/TileEntitySuperconductorCable.java
-
+/.gradle
+/run/
+/build/
 
