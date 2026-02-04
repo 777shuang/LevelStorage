@@ -1,24 +1,24 @@
 package makmods.levelstorage.iv;
 
 public class IVOreDictEntry implements IVEntry {
-	
-	private final String name;
-	private final int value;
 
-	public IVOreDictEntry(String oreDictName, int value) {
-		this.name = oreDictName;
-		this.value = value;
-	}
+    private final String name;
+    private final int value;
 
-	public String getName() {
-		return name;
-	}
+    public IVOreDictEntry(String oreDictName, int value) {
+        this.name = oreDictName;
+        this.value = value;
+    }
 
-	public int getValue() {
-		return value;
-	}
-	
-	public IVOreDictEntry clone() {
-		return new IVOreDictEntry(name, value);
-	}
+    public String getName() {
+        return name;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public IVOreDictEntry clone() {
+        return new IVOreDictEntry(name, value);
+    }
 }

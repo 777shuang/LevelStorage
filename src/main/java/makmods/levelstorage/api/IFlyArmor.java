@@ -10,9 +10,10 @@ import net.minecraft.item.ItemStack;
  * @author mak326428
  */
 public interface IFlyArmor {
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isFlyArmor(ItemStack is);
+
+    /**
+     * 
+     * @return
+     */
+    public boolean isFlyArmor(ItemStack is);
 }

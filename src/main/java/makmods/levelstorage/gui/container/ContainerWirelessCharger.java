@@ -1,8 +1,5 @@
 package makmods.levelstorage.gui.container;
 
-import ic2.api.item.IElectricItem;
-import makmods.levelstorage.gui.SlotFrequencyCard;
-import makmods.levelstorage.logic.NBTInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -11,85 +8,83 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.DimensionManager;
 
+import ic2.api.item.IElectricItem;
+import makmods.levelstorage.gui.SlotFrequencyCard;
+import makmods.levelstorage.logic.NBTInventory;
+
 public class ContainerWirelessCharger extends Container {
 
-	public class SlotItemCharger extends Slot {
-		public SlotItemCharger(IInventory par1IInventory, int par2, int par3,
-		        int par4) {
-			super(par1IInventory, par2, par3, par4);
-		}
+    public class SlotItemCharger extends Slot {
 
-		@Override
-		public boolean isItemValid(ItemStack stack) {
-			return stack.getItem() instanceof IElectricItem;
-		}
-	}
+        public SlotItemCharger(IInventory par1IInventory, int par2, int par3, int par4) {
+            super(par1IInventory, par2, par3, par4);
+        }
 
-	public NBTInventory inventory;
+        @Override
+        public boolean isItemValid(ItemStack stack) {
+            return stack.getItem() instanceof IElectricItem;
+        }
+    }
 
-	public ContainerWirelessCharger(int dimId, String playerName, int itemStack) {
-		this.inventory = new NBTInventory(dimId, playerName, itemStack);
-		this.addSlotToContainer(new SlotFrequencyCard(this.inventory, 0, 80, 35));
-		this.bindPlayerInventory(DimensionManager.getWorld(dimId)
-		        .getPlayerEntityByName(playerName).inventory);
-	}
+    public NBTInventory inventory;
 
-	protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 9; j++) {
-				this.addSlotToContainer(new Slot(inventoryPlayer,
-				        j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-			}
-		}
+    public ContainerWirelessCharger(int dimId, String playerName, int itemStack) {
+        this.inventory = new NBTInventory(dimId, playerName, itemStack);
+        this.addSlotToContainer(new SlotFrequencyCard(this.inventory, 0, 80, 35));
+        this.bindPlayerInventory(
+            DimensionManager.getWorld(dimId)
+                .getPlayerEntityByName(playerName).inventory);
+    }
 
-		for (int i = 0; i < 9; i++) {
-			this.addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18,
-			        142));
-		}
-	}
+    protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+            }
+        }
 
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer entityPlayer,
-	        int slotIndex) {
+        for (int i = 0; i < 9; i++) {
+            this.addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
+        }
+    }
 
-		ItemStack itemStack = null;
-		Slot slot = (Slot) this.inventorySlots.get(slotIndex);
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer entityPlayer, int slotIndex) {
 
-		if (slot != null && slot.getHasStack()) {
+        ItemStack itemStack = null;
+        Slot slot = (Slot) this.inventorySlots.get(slotIndex);
 
-			ItemStack slotItemStack = slot.getStack();
-			itemStack = slotItemStack.copy();
+        if (slot != null && slot.getHasStack()) {
 
-			if (slotIndex < NBTInventory.SIZE) {
-				if (!this.mergeItemStack(slotItemStack, NBTInventory.SIZE,
-				        this.inventorySlots.size(), false))
-					return null;
-			} else {
-				// WARNING: the following code is for this current case only.
-				// this won't work for you
-				if (slotItemStack != null) {
-					if (!(slotItemStack.getItem() instanceof IElectricItem))
-						return null;
-				}
-				// End of warning
-				if (!this.mergeItemStack(slotItemStack, 0, NBTInventory.SIZE,
-				        false))
-					return null;
-			}
+            ItemStack slotItemStack = slot.getStack();
+            itemStack = slotItemStack.copy();
 
-			if (slotItemStack.stackSize == 0) {
-				slot.putStack((ItemStack) null);
-			} else {
-				slot.onSlotChanged();
-			}
-		}
+            if (slotIndex < NBTInventory.SIZE) {
+                if (!this.mergeItemStack(slotItemStack, NBTInventory.SIZE, this.inventorySlots.size(), false))
+                    return null;
+            } else {
+                // WARNING: the following code is for this current case only.
+                // this won't work for you
+                if (slotItemStack != null) {
+                    if (!(slotItemStack.getItem() instanceof IElectricItem)) return null;
+                }
+                // End of warning
+                if (!this.mergeItemStack(slotItemStack, 0, NBTInventory.SIZE, false)) return null;
+            }
 
-		return itemStack;
-	}
+            if (slotItemStack.stackSize == 0) {
+                slot.putStack((ItemStack) null);
+            } else {
+                slot.onSlotChanged();
+            }
+        }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
-	}
+        return itemStack;
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        return true;
+    }
 
 }

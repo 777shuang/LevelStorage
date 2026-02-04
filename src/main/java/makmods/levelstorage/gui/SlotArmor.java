@@ -5,30 +5,29 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class SlotArmor extends Slot
-{
-  private final InventoryPlayer inventory;
-  private final int armorType;
+public class SlotArmor extends Slot {
 
-  public SlotArmor(InventoryPlayer inventory, int armorType, int xDisplayPosition, int yDisplayPosition)
-  {
-    super(inventory, 36 + (3 - armorType), xDisplayPosition, yDisplayPosition);
+    private final InventoryPlayer inventory;
+    private final int armorType;
 
-    this.inventory = inventory;
-    this.armorType = armorType;
-  }
+    public SlotArmor(InventoryPlayer inventory, int armorType, int xDisplayPosition, int yDisplayPosition) {
+        super(inventory, 36 + (3 - armorType), xDisplayPosition, yDisplayPosition);
 
-  public boolean isItemValid(ItemStack itemStack)
-  {
-    return itemStack.getItem().isValidArmor(itemStack, this.armorType, this.inventory.player);
-  }
+        this.inventory = inventory;
+        this.armorType = armorType;
+    }
 
-  @SideOnly(Side.CLIENT)
-  public Icon getBackgroundIconIndex()
-  {
-    return ItemArmor.func_94602_b(this.armorType);
-  }
+    public boolean isItemValid(ItemStack itemStack) {
+        return itemStack.getItem()
+            .isValidArmor(itemStack, this.armorType, this.inventory.player);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public Icon getBackgroundIconIndex() {
+        return ItemArmor.func_94602_b(this.armorType);
+    }
 }

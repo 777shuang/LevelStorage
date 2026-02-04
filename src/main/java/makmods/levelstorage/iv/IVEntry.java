@@ -1,7 +1,8 @@
 package makmods.levelstorage.iv;
 
-
 public interface IVEntry {
-	public int getValue();
-	public IVEntry clone();
+
+    public int getValue();
+
+    public IVEntry clone();
 }

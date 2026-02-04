@@ -9,9 +9,10 @@ package makmods.levelstorage.init;
  * 
  */
 public interface IHasRecipe {
-	/**
-	 * Invoked by {@link ModUniversalInitializer} when an item is past its
-	 * initialization state and recipe is to be added.
-	 */
-	void addCraftingRecipe();
+
+    /**
+     * Invoked by {@link ModUniversalInitializer} when an item is past its
+     * initialization state and recipe is to be added.
+     */
+    void addCraftingRecipe();
 }

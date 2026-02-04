@@ -5,11 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import makmods.levelstorage.LSCreativeTab;
-import makmods.levelstorage.LevelStorage;
-import makmods.levelstorage.init.ModUniversalInitializer;
-import makmods.levelstorage.proxy.ClientProxy;
-import makmods.levelstorage.tileentity.TileEntityIVGenerator;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +12,6 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.Maps;
@@ -25,237 +19,227 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import makmods.levelstorage.LSCreativeTab;
+import makmods.levelstorage.LevelStorage;
+import makmods.levelstorage.init.ModUniversalInitializer;
+import makmods.levelstorage.proxy.ClientProxy;
+import makmods.levelstorage.tileentity.TileEntityIVGenerator;
 
 public class SimpleItems extends Item {
 
-	/**
-	 * A hacky version of EnumRarity (since it does really bad things on
-	 * servers)
-	 * 
-	 * @author mak326428
-	 * 
-	 */
-	private static enum EnumHackyRarity {
-		common(15, "Common"), uncommon(14, "Uncommon"), rare(11, "Rare"), epic(
-				13, "Epic");
+    /**
+     * A hacky version of EnumRarity (since it does really bad things on
+     * servers)
+     * 
+     * @author mak326428
+     * 
+     */
+    private static enum EnumHackyRarity {
 
-		/**
-		 * A decimal representation of the hex color codes of a the color
-		 * assigned to this rarity type. (13 becomes d as in \247d which is
-		 * light purple)
-		 */
-		public final int rarityColor;
+        common(15, "Common"),
+        uncommon(14, "Uncommon"),
+        rare(11, "Rare"),
+        epic(13, "Epic");
 
-		/** Rarity name. */
-		public final String rarityName;
+        /**
+         * A decimal representation of the hex color codes of a the color
+         * assigned to this rarity type. (13 becomes d as in \247d which is
+         * light purple)
+         */
+        public final int rarityColor;
 
-		private EnumHackyRarity(int par3, String par4Str) {
-			this.rarityColor = par3;
-			this.rarityName = par4Str;
-		}
+        /** Rarity name. */
+        public final String rarityName;
 
-		@SideOnly(Side.CLIENT)
-		public EnumRarity toEnumRarity() {
-			return EnumRarity.values()[this.ordinal()];
-		}
-	}
+        private EnumHackyRarity(int par3, String par4Str) {
+            this.rarityColor = par3;
+            this.rarityName = par4Str;
+        }
 
-	public static SimpleItems instance = null;
+        @SideOnly(Side.CLIENT)
+        public EnumRarity toEnumRarity() {
+            return EnumRarity.values()[this.ordinal()];
+        }
+    }
 
-	public SimpleItems() {
-		super(LevelStorage.configuration.getItem("simpleItems",
-				ModUniversalInitializer.instance.getNextItemID()).getInt());
-		this.setHasSubtypes(true);
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			this.setCreativeTab(LSCreativeTab.instance);
-		}
-		initItems();
-	}
+    public static SimpleItems instance = null;
 
-	public static interface ITooltipSensitive {
-		public List<String> getTooltip(ItemStack is);
-	}
+    public SimpleItems() {
+        super(
+            LevelStorage.configuration.getItem("simpleItems", ModUniversalInitializer.instance.getNextItemID())
+                .getInt());
+        this.setHasSubtypes(true);
+        if (FMLCommonHandler.instance()
+            .getSide()
+            .isClient()) {
+            this.setCreativeTab(LSCreativeTab.instance);
+        }
+        initItems();
+    }
 
-	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		int meta = par1ItemStack.getItemDamage();
-		ITooltipSensitive tooltip = SimpleItemShortcut.values()[meta].tooltipHandler;
-		if (tooltip != null) {
-			List<String> t = tooltip.getTooltip(par1ItemStack);
-			for (String s : t)
-				par3List.add(s);
-		}
-	}
+    public static interface ITooltipSensitive {
 
-	public enum SimpleItemShortcut {
-		DUST_TINY_OSMIUM(0, "dustTinyOsmium", EnumHackyRarity.uncommon, false), // 0
-		DUST_OSMIUM(1, "dustOsmium", EnumHackyRarity.rare, false), // 1
-		OSMIRIDIUM_ALLOY(2, "itemOsmiridiumAlloy", EnumHackyRarity.rare, false), // 2
-		OSMIRIDIUM_PLATE(4, "itemOsmiridiumPlate", EnumHackyRarity.epic, false), // 3
-		INGOT_OSMIUM(8, "ingotOsmium", EnumHackyRarity.rare, false), // 4
-		INGOT_IRIDIUM(16, "ingotIridium", EnumHackyRarity.uncommon, false), // 5
-		ULTIMATE_CIRCUIT(32, "itemUltimateCircuit", EnumHackyRarity.rare, false), // 6
-		ENERGIZED_NETHER_STAR(64, "itemEnergizedStar", EnumHackyRarity.epic,
-				true), // 7
-		ANTIMATTER_MOLECULE(128, "itemAntimatterMolecule",
-				EnumHackyRarity.rare, false), // 8
-		ANTMATTER_TINY_PILE(192, "itemAntimatterTinyPile",
-				EnumHackyRarity.epic, false), // 9
-		ANTIMATTER_GLOB(256, "itemAntimatterGlob", EnumHackyRarity.epic, false), // 10
-		JETPACK_ACCELERATOR(384, "itemJetpackAccelerator",
-				EnumHackyRarity.uncommon, false), // 11
-		DUST_TINY_CHROME(512, "itemDustTinyChrome", EnumHackyRarity.common,
-				false), // 13
-		DUST_CHROME(513, "itemDustChrome", EnumHackyRarity.common, false), // 14
-		CRUSHED_CHROME_ORE(514, "crushedChromiteOre", EnumHackyRarity.common,
-				false), // 15
-		PURIFIED_CHROME_ORE(515, "purifiedCrushedChromiteOre",
-				EnumHackyRarity.common, false), // 16
-		INGOT_CHROME(516, "ingotChrome", EnumHackyRarity.common, false), // 17
-		PLATE_CHROME(517, "plateChrome", EnumHackyRarity.common, false), TINY_IRIDIUM_DUST(
-				600, "dustTinyIridium", EnumHackyRarity.common, false), // 18
-		PLATE_ANTIMATTER_IRIDIUM(518, "plateAntimatterIridium",
-				EnumHackyRarity.epic, false), IV_GENERATOR_UPGRADE(700,
-				"craftingUpgradeIVGenerator", EnumHackyRarity.epic, false,
-				new ITooltipSensitive() {
-					@Override
-					public List<String> getTooltip(ItemStack is) {
-						return Arrays
-								.asList("Increases IV Generator's speed by "
-										+ (TileEntityIVGenerator.BUFF_IV_T * is.stackSize)
-										+ " IV/t.");
-					}
-				});
-		final String name;
-		final boolean hasEffect;
-		final EnumHackyRarity rarity;
-		final int metadata;
-		ITooltipSensitive tooltipHandler;
+        public List<String> getTooltip(ItemStack is);
+    }
 
-		private SimpleItemShortcut(int metadata, String name,
-				EnumHackyRarity rarity, boolean hasEffect) {
-			this.name = name;
-			this.rarity = rarity;
-			this.metadata = metadata;
-			this.hasEffect = hasEffect;
-			tooltipHandler = null;
-		}
+    public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        int meta = par1ItemStack.getItemDamage();
+        ITooltipSensitive tooltip = SimpleItemShortcut.values()[meta].tooltipHandler;
+        if (tooltip != null) {
+            List<String> t = tooltip.getTooltip(par1ItemStack);
+            for (String s : t) par3List.add(s);
+        }
+    }
 
-		private SimpleItemShortcut(int metadata, String name,
-				EnumHackyRarity rarity, boolean hasEffect,
-				ITooltipSensitive tooltipHandler) {
-			this(metadata, name, rarity, hasEffect);
-			this.tooltipHandler = tooltipHandler;
-		}
+    public enum SimpleItemShortcut {
 
-		public String getName() {
-			return name;
-		}
+        DUST_TINY_OSMIUM(0, "dustTinyOsmium", EnumHackyRarity.uncommon, false), // 0
+        DUST_OSMIUM(1, "dustOsmium", EnumHackyRarity.rare, false), // 1
+        OSMIRIDIUM_ALLOY(2, "itemOsmiridiumAlloy", EnumHackyRarity.rare, false), // 2
+        OSMIRIDIUM_PLATE(4, "itemOsmiridiumPlate", EnumHackyRarity.epic, false), // 3
+        INGOT_OSMIUM(8, "ingotOsmium", EnumHackyRarity.rare, false), // 4
+        INGOT_IRIDIUM(16, "ingotIridium", EnumHackyRarity.uncommon, false), // 5
+        ULTIMATE_CIRCUIT(32, "itemUltimateCircuit", EnumHackyRarity.rare, false), // 6
+        ENERGIZED_NETHER_STAR(64, "itemEnergizedStar", EnumHackyRarity.epic, true), // 7
+        ANTIMATTER_MOLECULE(128, "itemAntimatterMolecule", EnumHackyRarity.rare, false), // 8
+        ANTMATTER_TINY_PILE(192, "itemAntimatterTinyPile", EnumHackyRarity.epic, false), // 9
+        ANTIMATTER_GLOB(256, "itemAntimatterGlob", EnumHackyRarity.epic, false), // 10
+        JETPACK_ACCELERATOR(384, "itemJetpackAccelerator", EnumHackyRarity.uncommon, false), // 11
+        DUST_TINY_CHROME(512, "itemDustTinyChrome", EnumHackyRarity.common, false), // 13
+        DUST_CHROME(513, "itemDustChrome", EnumHackyRarity.common, false), // 14
+        CRUSHED_CHROME_ORE(514, "crushedChromiteOre", EnumHackyRarity.common, false), // 15
+        PURIFIED_CHROME_ORE(515, "purifiedCrushedChromiteOre", EnumHackyRarity.common, false), // 16
+        INGOT_CHROME(516, "ingotChrome", EnumHackyRarity.common, false), // 17
+        PLATE_CHROME(517, "plateChrome", EnumHackyRarity.common, false),
+        TINY_IRIDIUM_DUST(600, "dustTinyIridium", EnumHackyRarity.common, false), // 18
+        PLATE_ANTIMATTER_IRIDIUM(518, "plateAntimatterIridium", EnumHackyRarity.epic, false),
+        IV_GENERATOR_UPGRADE(700, "craftingUpgradeIVGenerator", EnumHackyRarity.epic, false, new ITooltipSensitive() {
 
-		public boolean hasEffect() {
-			return hasEffect;
-		}
+            @Override
+            public List<String> getTooltip(ItemStack is) {
+                return Arrays.asList(
+                    "Increases IV Generator's speed by " + (TileEntityIVGenerator.BUFF_IV_T * is.stackSize) + " IV/t.");
+            }
+        });
 
-		public EnumHackyRarity getRarity() {
-			return rarity;
-		}
+        final String name;
+        final boolean hasEffect;
+        final EnumHackyRarity rarity;
+        final int metadata;
+        ITooltipSensitive tooltipHandler;
 
-		public String toString() {
-			return getName();
-		}
+        private SimpleItemShortcut(int metadata, String name, EnumHackyRarity rarity, boolean hasEffect) {
+            this.name = name;
+            this.rarity = rarity;
+            this.metadata = metadata;
+            this.hasEffect = hasEffect;
+            tooltipHandler = null;
+        }
 
-		public int getMetadata() {
-			return metadata;
-		}
+        private SimpleItemShortcut(int metadata, String name, EnumHackyRarity rarity, boolean hasEffect,
+            ITooltipSensitive tooltipHandler) {
+            this(metadata, name, rarity, hasEffect);
+            this.tooltipHandler = tooltipHandler;
+        }
 
-		public ItemStack getItemStack() {
-			return new ItemStack(SimpleItems.instance.itemID, 1, metadata)
-					.copy();
-		}
-	}
+        public String getName() {
+            return name;
+        }
 
-	public void initItems() {
-		SimpleItemShortcut[] vals = SimpleItemShortcut.values();
-		for (SimpleItemShortcut val : vals)
-			addItem(val.metadata, val.getName(), val.getRarity(),
-					val.hasEffect());
-	}
+        public boolean hasEffect() {
+            return hasEffect;
+        }
 
-	// Meta <==> SimpleItemData
-	private Map<Integer, SimpleItemData> mapping = Maps.newHashMap();
+        public EnumHackyRarity getRarity() {
+            return rarity;
+        }
 
-	private static class SimpleItemData {
-		public Icon icon;
-		public String unlocalizedName;
-		public EnumHackyRarity rarity;
-		public boolean hasEffect;
-	}
+        public String toString() {
+            return getName();
+        }
 
-	public void addItem(int meta, String name, EnumHackyRarity rarity,
-			boolean hasEffect) {
-		if (mapping.containsKey(meta))
-			throw new RuntimeException(
-					"SimpleItems: addItem(): mapping already contains item with metadata ("
-							+ name + ")");
-		SimpleItemData data = new SimpleItemData();
-		data.rarity = rarity;
-		data.unlocalizedName = name;
-		data.hasEffect = hasEffect;
-		mapping.put(meta, data);
-		ItemStack currStack = new ItemStack(this.itemID, 1, meta);
-		OreDictionary.registerOre(name, currStack);
-	}
+        public int getMetadata() {
+            return metadata;
+        }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean hasEffect(ItemStack par1ItemStack, int pass) {
-		int meta = par1ItemStack.getItemDamage();
-		if (!mapping.containsKey(meta))
-			return false;
-		return mapping.get(meta).hasEffect;
-	}
+        public ItemStack getItemStack() {
+            return new ItemStack(SimpleItems.instance.itemID, 1, metadata).copy();
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public EnumRarity getRarity(ItemStack par1ItemStack) {
-		int meta = par1ItemStack.getItemDamage();
-		if (!mapping.containsKey(meta))
-			return EnumRarity.common;
-		return mapping.get(meta).rarity.toEnumRarity();
-	}
+    public void initItems() {
+        SimpleItemShortcut[] vals = SimpleItemShortcut.values();
+        for (SimpleItemShortcut val : vals) addItem(val.metadata, val.getName(), val.getRarity(), val.hasEffect());
+    }
 
-	public String getUnlocalizedName(ItemStack stack) {
-		int meta = stack.getItemDamage();
-		return mapping.get(meta).unlocalizedName;
-	}
+    // Meta <==> SimpleItemData
+    private Map<Integer, SimpleItemData> mapping = Maps.newHashMap();
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerIcons(IconRegister iconRegister) {
-		for (Entry<Integer, SimpleItemData> entry : mapping.entrySet()) {
-			String name = entry.getValue().unlocalizedName;
-			entry.getValue().icon = iconRegister.registerIcon(ClientProxy
-					.getTexturePathFor(name));
-		}
-	}
+    private static class SimpleItemData {
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public Icon getIconFromDamage(int meta) {
-		if (!mapping.containsKey(meta))
-			return null;
-		try {
-			return (Icon) mapping.get(meta).icon;
-		} catch (Throwable t) {
-			return null;
-		}
-	}
+        public Icon icon;
+        public String unlocalizedName;
+        public EnumHackyRarity rarity;
+        public boolean hasEffect;
+    }
 
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
-		for (Entry<Integer, SimpleItemData> entry : mapping.entrySet()) {
-			par3List.add(new ItemStack(par1, 1, entry.getKey()));
-		}
-	}
+    public void addItem(int meta, String name, EnumHackyRarity rarity, boolean hasEffect) {
+        if (mapping.containsKey(meta)) throw new RuntimeException(
+            "SimpleItems: addItem(): mapping already contains item with metadata (" + name + ")");
+        SimpleItemData data = new SimpleItemData();
+        data.rarity = rarity;
+        data.unlocalizedName = name;
+        data.hasEffect = hasEffect;
+        mapping.put(meta, data);
+        ItemStack currStack = new ItemStack(this.itemID, 1, meta);
+        OreDictionary.registerOre(name, currStack);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasEffect(ItemStack par1ItemStack, int pass) {
+        int meta = par1ItemStack.getItemDamage();
+        if (!mapping.containsKey(meta)) return false;
+        return mapping.get(meta).hasEffect;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public EnumRarity getRarity(ItemStack par1ItemStack) {
+        int meta = par1ItemStack.getItemDamage();
+        if (!mapping.containsKey(meta)) return EnumRarity.common;
+        return mapping.get(meta).rarity.toEnumRarity();
+    }
+
+    public String getUnlocalizedName(ItemStack stack) {
+        int meta = stack.getItemDamage();
+        return mapping.get(meta).unlocalizedName;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void registerIcons(IconRegister iconRegister) {
+        for (Entry<Integer, SimpleItemData> entry : mapping.entrySet()) {
+            String name = entry.getValue().unlocalizedName;
+            entry.getValue().icon = iconRegister.registerIcon(ClientProxy.getTexturePathFor(name));
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Icon getIconFromDamage(int meta) {
+        if (!mapping.containsKey(meta)) return null;
+        try {
+            return (Icon) mapping.get(meta).icon;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List) {
+        for (Entry<Integer, SimpleItemData> entry : mapping.entrySet()) {
+            par3List.add(new ItemStack(par1, 1, entry.getKey()));
+        }
+    }
 
 }

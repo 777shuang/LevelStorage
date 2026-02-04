@@ -2,7 +2,6 @@ package makmods.levelstorage.registry;
 
 import java.util.Map;
 
-import makmods.levelstorage.proxy.ClientProxy;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
@@ -11,6 +10,7 @@ import com.google.common.collect.Maps;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import makmods.levelstorage.proxy.ClientProxy;
 
 @SideOnly(Side.CLIENT)
 /**
@@ -18,85 +18,82 @@ import cpw.mods.fml.relauncher.SideOnly;
  * Superiorities over previous method:
  * 1. You have easier access over ALL the textures in the mod from any point of it (if client, after initialization ofc)
  * 2. Cleaner code. Much cleaner.
+ * 
  * @author mak326428
  */
 public class BlockTextureRegistry {
 
-	public static final BlockTextureRegistry instance = new BlockTextureRegistry();
+    public static final BlockTextureRegistry instance = new BlockTextureRegistry();
 
-	private Map<String, SimpleBlockTexture> textures = Maps.newHashMap();
+    private Map<String, SimpleBlockTexture> textures = Maps.newHashMap();
 
-	public void registerIcons(IconRegister iconRegister, String name) {
-		Icon side = iconRegister.registerIcon(ClientProxy
-		        .getTexturePathFor(name) + "Side");
-		Icon up = iconRegister.registerIcon(ClientProxy.getTexturePathFor(name)
-		        + "Up");
-		Icon down = iconRegister.registerIcon(ClientProxy
-		        .getTexturePathFor(name) + "Down");
-		textures.put(name, new SimpleBlockTexture(up, down, side));
-	}
+    public void registerIcons(IconRegister iconRegister, String name) {
+        Icon side = iconRegister.registerIcon(ClientProxy.getTexturePathFor(name) + "Side");
+        Icon up = iconRegister.registerIcon(ClientProxy.getTexturePathFor(name) + "Up");
+        Icon down = iconRegister.registerIcon(ClientProxy.getTexturePathFor(name) + "Down");
+        textures.put(name, new SimpleBlockTexture(up, down, side));
+    }
 
-	public SimpleBlockTexture getTextureFor(String name) {
-		if (!textures.containsKey(name))
-			return null;
-		return textures.get(name);
-	}
+    public SimpleBlockTexture getTextureFor(String name) {
+        if (!textures.containsKey(name)) return null;
+        return textures.get(name);
+    }
 
-	public Icon getIcon(int side, String name) {
-		if (!textures.containsKey(name))
-			return null;
-		ForgeDirection orientation = ForgeDirection.VALID_DIRECTIONS[side];
-		SimpleBlockTexture t = textures.get(name);
-		switch (orientation) {
-			case UP:
-				return t.upIcon;
-			case DOWN:
-				return t.downIcon;
-			default:
-				return t.sideIcon;
-		}
-	}
+    public Icon getIcon(int side, String name) {
+        if (!textures.containsKey(name)) return null;
+        ForgeDirection orientation = ForgeDirection.VALID_DIRECTIONS[side];
+        SimpleBlockTexture t = textures.get(name);
+        switch (orientation) {
+            case UP:
+                return t.upIcon;
+            case DOWN:
+                return t.downIcon;
+            default:
+                return t.sideIcon;
+        }
+    }
 
-	public static class SimpleBlockTexture {
-		private Icon sideIcon;
-		private Icon upIcon;
-		private Icon downIcon;
+    public static class SimpleBlockTexture {
 
-		public SimpleBlockTexture(Icon up, Icon down, Icon side) {
-			this.sideIcon = side;
-			this.downIcon = down;
-			this.upIcon = up;
-		}
+        private Icon sideIcon;
+        private Icon upIcon;
+        private Icon downIcon;
 
-		public SimpleBlockTexture() {
-			sideIcon = null;
-			downIcon = null;
-			upIcon = null;
-		}
+        public SimpleBlockTexture(Icon up, Icon down, Icon side) {
+            this.sideIcon = side;
+            this.downIcon = down;
+            this.upIcon = up;
+        }
 
-		public Icon getSideIcon() {
-			return sideIcon;
-		}
+        public SimpleBlockTexture() {
+            sideIcon = null;
+            downIcon = null;
+            upIcon = null;
+        }
 
-		public void setSideIcon(Icon sideIcon) {
-			this.sideIcon = sideIcon;
-		}
+        public Icon getSideIcon() {
+            return sideIcon;
+        }
 
-		public Icon getUpIcon() {
-			return upIcon;
-		}
+        public void setSideIcon(Icon sideIcon) {
+            this.sideIcon = sideIcon;
+        }
 
-		public void setUpIcon(Icon upIcon) {
-			this.upIcon = upIcon;
-		}
+        public Icon getUpIcon() {
+            return upIcon;
+        }
 
-		public Icon getDownIcon() {
-			return downIcon;
-		}
+        public void setUpIcon(Icon upIcon) {
+            this.upIcon = upIcon;
+        }
 
-		public void setDownIcon(Icon downIcon) {
-			this.downIcon = downIcon;
-		}
-	}
+        public Icon getDownIcon() {
+            return downIcon;
+        }
+
+        public void setDownIcon(Icon downIcon) {
+            this.downIcon = downIcon;
+        }
+    }
 
 }

@@ -10,5 +10,6 @@ import net.minecraft.item.ItemBlock;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface CustomItemBlock {
-	Class<? extends ItemBlock> itemBlock();
+
+    Class<? extends ItemBlock> itemBlock();
 }

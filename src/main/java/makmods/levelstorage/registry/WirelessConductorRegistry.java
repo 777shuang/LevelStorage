@@ -4,93 +4,90 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WirelessConductorRegistry {
-	public static WirelessConductorRegistry instance = new WirelessConductorRegistry();
 
-	private Map<IWirelessConductor, ConductorType> conductors;
+    public static WirelessConductorRegistry instance = new WirelessConductorRegistry();
 
-	private WirelessConductorRegistry() {
-		this.conductors = new HashMap<IWirelessConductor, ConductorType>();
-	}
+    private Map<IWirelessConductor, ConductorType> conductors;
 
-	/**
-	 * Adds conductor to registry
-	 * 
-	 * @param conductor
-	 *            TileEntity to add
-	 * @param type
-	 *            Type of conductor (receiver or emitter)
-	 * @return whether conductor was added or not
-	 */
-	public boolean addConductorToRegistry(IWirelessConductor conductor,
-	        ConductorType type) {
-		if (this.conductors.containsKey(conductor)) {
-			this.conductors.remove(conductor);
-		}
-		this.conductors.put(conductor, type);
-		return true;
-	}
+    private WirelessConductorRegistry() {
+        this.conductors = new HashMap<IWirelessConductor, ConductorType>();
+    }
 
-	/**
-	 * Gets all the entries inside registry
-	 * 
-	 * @return entries
-	 */
-	public Map<IWirelessConductor, ConductorType> getEntries() {
-		return this.conductors;
-	}
+    /**
+     * Adds conductor to registry
+     * 
+     * @param conductor
+     *                  TileEntity to add
+     * @param type
+     *                  Type of conductor (receiver or emitter)
+     * @return whether conductor was added or not
+     */
+    public boolean addConductorToRegistry(IWirelessConductor conductor, ConductorType type) {
+        if (this.conductors.containsKey(conductor)) {
+            this.conductors.remove(conductor);
+        }
+        this.conductors.put(conductor, type);
+        return true;
+    }
 
-	/**
-	 * Removes conductor from registry. You should call this when conductor
-	 * cannot act, e.g. on chunk unload
-	 * 
-	 * @param conductor
-	 *            conductor to delete
-	 */
-	public void removeFromRegistry(IWirelessConductor conductor) {
-		if (this.isAddedToRegistry(conductor)) {
-			this.conductors.remove(conductor);
-		}
-	}
+    /**
+     * Gets all the entries inside registry
+     * 
+     * @return entries
+     */
+    public Map<IWirelessConductor, ConductorType> getEntries() {
+        return this.conductors;
+    }
 
-	/**
-	 * Gets the type of the conductor inside the registry
-	 * 
-	 * @param conductor
-	 * @return Type of the conductor
-	 */
-	public ConductorType getConductorType(IWirelessConductor conductor) {
-		if (this.isAddedToRegistry(conductor))
-			return this.conductors.get(conductor);
-		return null;
-	}
+    /**
+     * Removes conductor from registry. You should call this when conductor
+     * cannot act, e.g. on chunk unload
+     * 
+     * @param conductor
+     *                  conductor to delete
+     */
+    public void removeFromRegistry(IWirelessConductor conductor) {
+        if (this.isAddedToRegistry(conductor)) {
+            this.conductors.remove(conductor);
+        }
+    }
 
-	/**
-	 * Checks whether or not conductors exists in the current registry
-	 * 
-	 * @param conductor
-	 * @return whether or not the conductor exists in the registry
-	 */
-	public boolean isAddedToRegistry(IWirelessConductor conductor) {
-		return this.conductors.containsKey(conductor);
-	}
+    /**
+     * Gets the type of the conductor inside the registry
+     * 
+     * @param conductor
+     * @return Type of the conductor
+     */
+    public ConductorType getConductorType(IWirelessConductor conductor) {
+        if (this.isAddedToRegistry(conductor)) return this.conductors.get(conductor);
+        return null;
+    }
 
-	/**
-	 * Sets the conductor type (notice that you need to add it to registry
-	 * first)
-	 * 
-	 * @param conductor
-	 *            conductor to set type on
-	 * @param type
-	 *            new type for the conductor
-	 * @return whether or not type was set
-	 */
-	public boolean setConductorType(IWirelessConductor conductor,
-	        ConductorType type) {
-		if (!this.conductors.containsKey(conductor))
-			return false;
-		this.conductors.remove(conductor);
-		this.conductors.put(conductor, type);
+    /**
+     * Checks whether or not conductors exists in the current registry
+     * 
+     * @param conductor
+     * @return whether or not the conductor exists in the registry
+     */
+    public boolean isAddedToRegistry(IWirelessConductor conductor) {
+        return this.conductors.containsKey(conductor);
+    }
 
-		return true;
-	}
+    /**
+     * Sets the conductor type (notice that you need to add it to registry
+     * first)
+     * 
+     * @param conductor
+     *                  conductor to set type on
+     * @param type
+     *                  new type for the conductor
+     * @return whether or not type was set
+     */
+    public boolean setConductorType(IWirelessConductor conductor, ConductorType type) {
+        if (!this.conductors.containsKey(conductor)) return false;
+        this.conductors.remove(conductor);
+        this.conductors.put(conductor, type);
+
+        return true;
+    }
 }

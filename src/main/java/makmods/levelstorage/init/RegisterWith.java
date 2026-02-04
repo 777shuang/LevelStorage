@@ -6,16 +6,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Tells the ModUniversalInitializer to only register this item/block
- * when a specific mod is installed</p>
+ * <p>
+ * Tells the ModUniversalInitializer to only register this item/block
+ * when a specific mod is installed
+ * </p>
  * 
- * <p>Example: <pre>@RegisterWith("Thaumcraft")<br />public class ItemSuperEpicThingy extends Item {</pre>
- * In this example, ModUniversalInitializer will only register and load the item/block when Thaumcraft is installed.</p>
+ * <p>
+ * Example:
+ * 
+ * <pre>
+ * &#64;RegisterWith("Thaumcraft")<br />public class ItemSuperEpicThingy extends Item {
+ * </pre>
+ * 
+ * In this example, ModUniversalInitializer will only register and load the item/block when Thaumcraft is installed.
+ * </p>
  * 
  * @author mak326428
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface RegisterWith {
-	String value();
+
+    String value();
 }

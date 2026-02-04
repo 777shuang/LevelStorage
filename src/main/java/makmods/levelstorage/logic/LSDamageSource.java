@@ -8,37 +8,32 @@ import net.minecraft.util.StatCollector;
 
 public class LSDamageSource extends DamageSource {
 
-	public static LSDamageSource energyField = (new LSDamageSource(
-	        "energyFieldKill"));
-	public static LSDamageSource forcefieldArmor = (new LSDamageSource(
-	        "forcefieldArmor"));
-	public static DamageSource forcefieldArmorInstaKill = (DamageSource) ((new LSDamageSource(
-	        "player"))).setDamageBypassesArmor();
-	public static DamageSource teslaRay = (DamageSource) ((new LSDamageSource(
-	        "teslaHelmetKill")));
-	public static DamageSource disassembled = (DamageSource) ((new LSDamageSource(
-	        "disassemble"))).setDamageBypassesArmor();
-	
+    public static LSDamageSource energyField = (new LSDamageSource("energyFieldKill"));
+    public static LSDamageSource forcefieldArmor = (new LSDamageSource("forcefieldArmor"));
+    public static DamageSource forcefieldArmorInstaKill = (DamageSource) ((new LSDamageSource("player")))
+        .setDamageBypassesArmor();
+    public static DamageSource teslaRay = (DamageSource) ((new LSDamageSource("teslaHelmetKill")));
+    public static DamageSource disassembled = (DamageSource) ((new LSDamageSource("disassemble")))
+        .setDamageBypassesArmor();
 
-	private String killMessage;
+    private String killMessage;
 
-	@Override
-	public ChatMessageComponent getDeathMessage(
-	        EntityLivingBase par1EntityLivingBase) {
-		if (par1EntityLivingBase instanceof EntityPlayer)
-			return ChatMessageComponent.createFromText(String.format(
-			        StatCollector.translateToLocal(this.killMessage),
-			        ((EntityPlayer) par1EntityLivingBase).username));
-		return ChatMessageComponent.createFromText(this.killMessage);
-	}
+    @Override
+    public ChatMessageComponent getDeathMessage(EntityLivingBase par1EntityLivingBase) {
+        if (par1EntityLivingBase instanceof EntityPlayer) return ChatMessageComponent.createFromText(
+            String.format(
+                StatCollector.translateToLocal(this.killMessage),
+                ((EntityPlayer) par1EntityLivingBase).username));
+        return ChatMessageComponent.createFromText(this.killMessage);
+    }
 
-	protected LSDamageSource(String par1Str) {
-		super(par1Str);
-		this.setKillMessage("death." + par1Str);
-	}
+    protected LSDamageSource(String par1Str) {
+        super(par1Str);
+        this.setKillMessage("death." + par1Str);
+    }
 
-	private LSDamageSource setKillMessage(String message) {
-		this.killMessage = message;
-		return this;
-	}
+    private LSDamageSource setKillMessage(String message) {
+        this.killMessage = message;
+        return this;
+    }
 }

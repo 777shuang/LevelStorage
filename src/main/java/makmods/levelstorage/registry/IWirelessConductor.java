@@ -6,47 +6,48 @@ package makmods.levelstorage.registry;
  * @author mak326428
  */
 public interface IWirelessConductor {
-	/**
-	 * X coord for the current instance
-	 */
-	public int getX();
 
-	/**
-	 * Type for current instance
-	 */
-	public ConductorType getType();
+    /**
+     * X coord for the current instance
+     */
+    public int getX();
 
-	/**
-	 * Y coord for the current instance
-	 */
-	public int getY();
+    /**
+     * Type for current instance
+     */
+    public ConductorType getType();
 
-	/**
-	 * Z coord for the current instance
-	 */
-	public int getZ();
+    /**
+     * Y coord for the current instance
+     */
+    public int getY();
 
-	/**
-	 * Dimension id for the current instance
-	 */
-	public int getDimId();
+    /**
+     * Z coord for the current instance
+     */
+    public int getZ();
 
-	/**
-	 * ConductorType.SINK only, called when some other paired conductor sends
-	 * you energy
-	 * 
-	 * @param amount
-	 *            Energy being sent
-	 * @return Energy not being consumed
-	 */
-	public int receiveEnergy(int amount, IWirelessConductor transmitter);
+    /**
+     * Dimension id for the current instance
+     */
+    public int getDimId();
 
-	/**
-	 * Returns pair for the current instance
-	 * 
-	 * @return linked pair
-	 */
-	public IWirelessConductor getPair();
-	
-	public boolean canReceive(int amount);
+    /**
+     * ConductorType.SINK only, called when some other paired conductor sends
+     * you energy
+     * 
+     * @param amount
+     *               Energy being sent
+     * @return Energy not being consumed
+     */
+    public int receiveEnergy(int amount, IWirelessConductor transmitter);
+
+    /**
+     * Returns pair for the current instance
+     * 
+     * @return linked pair
+     */
+    public IWirelessConductor getPair();
+
+    public boolean canReceive(int amount);
 }

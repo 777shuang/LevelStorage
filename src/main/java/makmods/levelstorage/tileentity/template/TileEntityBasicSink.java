@@ -1,13 +1,5 @@
 package makmods.levelstorage.tileentity.template;
 
-import ic2.api.Direction;
-import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergyTile;
-import ic2.api.tile.IEnergyStorage;
-import ic2.api.tile.IWrenchable;
-import makmods.levelstorage.LevelStorage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +10,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 
+import ic2.api.Direction;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergyTile;
+import ic2.api.tile.IEnergyStorage;
+import ic2.api.tile.IWrenchable;
+import makmods.levelstorage.LevelStorage;
+
 /**
  * More like an API, for basic sinks. Contains Energy Storage, Basic Energy
  * Inputs, Explosions on exceed of Max Packet Size, Wrenchable. If you intend on
@@ -26,192 +27,189 @@ import net.minecraftforge.common.MinecraftForge;
  * @author mak326428
  * 
  */
-public abstract class TileEntityBasicSink extends TileEntity implements
-		IEnergyTile, IEnergySink, IWrenchable, IEnergyStorage {
+public abstract class TileEntityBasicSink extends TileEntity
+    implements IEnergyTile, IEnergySink, IWrenchable, IEnergyStorage {
 
-	private boolean addedToENet = false;
-	private int stored;
-	public static final String NBT_STORED = "stored";
+    private boolean addedToENet = false;
+    private int stored;
+    public static final String NBT_STORED = "stored";
 
-	@Override
-	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
-		super.readFromNBT(par1NBTTagCompound);
-		stored = par1NBTTagCompound.getInteger(NBT_STORED);
+    @Override
+    public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
+        super.readFromNBT(par1NBTTagCompound);
+        stored = par1NBTTagCompound.getInteger(NBT_STORED);
 
-	}
+    }
 
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
+    public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
+        super.writeToNBT(par1NBTTagCompound);
 
-		par1NBTTagCompound.setInteger(NBT_STORED, stored);
+        par1NBTTagCompound.setInteger(NBT_STORED, stored);
 
-	}
+    }
 
-	public boolean canUse(int amount) {
-		return stored >= amount;
-	}
+    public boolean canUse(int amount) {
+        return stored >= amount;
+    }
 
-	public void use(int amount) {
-		stored -= amount;
-	}
+    public void use(int amount) {
+        stored -= amount;
+    }
 
-	@Override
-	public Packet getDescriptionPacket() {
-		NBTTagCompound tagCompound = new NBTTagCompound();
-		this.writeToNBT(tagCompound);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord,
-				this.zCoord, 5, tagCompound);
-	}
+    @Override
+    public Packet getDescriptionPacket() {
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        this.writeToNBT(tagCompound);
+        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 5, tagCompound);
+    }
 
-	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		this.readFromNBT(pkt.data);
-	}
+    @Override
+    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
+        this.readFromNBT(pkt.data);
+    }
 
-	@Override
-	public void setStored(int energy) {
-		this.stored = energy;
+    @Override
+    public void setStored(int energy) {
+        this.stored = energy;
 
-	}
+    }
 
-	// IWrenchable stuff
+    // IWrenchable stuff
 
-	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
-		return false;
-	}
+    public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
+        return false;
+    }
 
-	public short getFacing() {
-		return (short) ForgeDirection.UNKNOWN.flag;
-	}
+    public short getFacing() {
+        return (short) ForgeDirection.UNKNOWN.flag;
+    }
 
-	public void setFacing(short facing) {
-		;
-		// Do nothing here
-	}
+    public void setFacing(short facing) {
+        ;
+        // Do nothing here
+    }
 
-	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
-		return true;
-	}
+    public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
+        return true;
+    }
 
-	public float getWrenchDropRate() {
-		return 0.5f;
-	}
+    public float getWrenchDropRate() {
+        return 0.5f;
+    }
 
-	@Override
-	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(worldObj.getBlockId(xCoord, yCoord, zCoord), 1,
-				worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
-	}
+    @Override
+    public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
+        return new ItemStack(
+            worldObj.getBlockId(xCoord, yCoord, zCoord),
+            1,
+            worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+    }
 
-	// End of IWrenchable
+    // End of IWrenchable
 
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
-		if (LevelStorage.isSimulating())
-			if (!addedToENet) {
-				MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
-				addedToENet = true;
-			}
-	}
+    @Override
+    public void updateEntity() {
+        super.updateEntity();
+        if (LevelStorage.isSimulating()) if (!addedToENet) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+            addedToENet = true;
+        }
+    }
 
-	private void unloadFromENet() {
-		if (LevelStorage.isSimulating())
-			if (addedToENet) {
-				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-				addedToENet = false;
-			}
-	}
+    private void unloadFromENet() {
+        if (LevelStorage.isSimulating()) if (addedToENet) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            addedToENet = false;
+        }
+    }
 
-	public abstract void onUnloaded();
+    public abstract void onUnloaded();
 
-	@Override
-	public void invalidate() {
-		onUnloaded();
-		unloadFromENet();
-		super.invalidate();
-	}
+    @Override
+    public void invalidate() {
+        onUnloaded();
+        unloadFromENet();
+        super.invalidate();
+    }
 
-	@Override
-	public void onChunkUnload() {
-		unloadFromENet();
-		super.onChunkUnload();
-	}
+    @Override
+    public void onChunkUnload() {
+        unloadFromENet();
+        super.onChunkUnload();
+    }
 
-	public boolean isAddedToEnergyNet() {
-		return addedToENet;
-	}
+    public boolean isAddedToEnergyNet() {
+        return addedToENet;
+    }
 
-	public abstract int getMaxInput();
+    public abstract int getMaxInput();
 
-	public abstract boolean explodes();
+    public abstract boolean explodes();
 
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
-		return true;
-	}
+    public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
+        return true;
+    }
 
-	public int getMaxSafeInput() {
-		return getMaxInput();
-	}
+    public int getMaxSafeInput() {
+        return getMaxInput();
+    }
 
-	@Override
-	public int addEnergy(int amount) {
+    @Override
+    public int addEnergy(int amount) {
 
-		this.stored += amount;
-		return stored;
-	}
+        this.stored += amount;
+        return stored;
+    }
 
-	public abstract void onLoaded();
+    public abstract void onLoaded();
 
-	public void validate() {
-		super.validate();
-		onLoaded();
-	}
+    public void validate() {
+        super.validate();
+        onLoaded();
+    }
 
-	public int getStored() {
-		return this.stored;
-	}
+    public int getStored() {
+        return this.stored;
+    }
 
-	public boolean isTeleporterCompatible(Direction side) {
-		return false;
-	}
+    public boolean isTeleporterCompatible(Direction side) {
+        return false;
+    }
 
-	@Override
-	public double demandedEnergyUnits() {
-		return getCapacity() - getStored();
-	}
+    @Override
+    public double demandedEnergyUnits() {
+        return getCapacity() - getStored();
+    }
 
-	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
-		if (amount > getMaxInput() && explodes()) {
-			this.invalidate();
-			this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
-			this.worldObj.createExplosion(null, this.xCoord, this.yCoord,
-					this.zCoord, 2F, false);
-		}
-		if ((this.getCapacity() - this.getStored()) > amount) {
-			this.addEnergy((int) amount);
-			return 0;
-		} else {
-			int leftover = (int) amount
-					- (this.getCapacity() - this.getStored());
-			this.setStored(getCapacity());
-			return leftover;
-		}
-	}
+    @Override
+    public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+        if (amount > getMaxInput() && explodes()) {
+            this.invalidate();
+            this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
+            this.worldObj.createExplosion(null, this.xCoord, this.yCoord, this.zCoord, 2F, false);
+        }
+        if ((this.getCapacity() - this.getStored()) > amount) {
+            this.addEnergy((int) amount);
+            return 0;
+        } else {
+            int leftover = (int) amount - (this.getCapacity() - this.getStored());
+            this.setStored(getCapacity());
+            return leftover;
+        }
+    }
 
-	@Override
-	public double getOutputEnergyUnitsPerTick() {
-		return 0;
-	}
+    @Override
+    public double getOutputEnergyUnitsPerTick() {
+        return 0;
+    }
 
-	@Override
-	public boolean isTeleporterCompatible(ForgeDirection side) {
-		return false;
-	}
+    @Override
+    public boolean isTeleporterCompatible(ForgeDirection side) {
+        return false;
+    }
 
-	@Override
-	public int getOutput() {
-		return 0;
-	}
+    @Override
+    public int getOutput() {
+        return 0;
+    }
 }
